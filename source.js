@@ -353,10 +353,10 @@
                         // Only add callback if not defined or new Ctx has been identified.
                         if (newCtx || (relationValue && !relationValue._proxyCallback)) {
                             if(!relationValue._proxyCallback) {
-                                relationValue._proxyCallback = function () {
-                                    return Backbone.Associations.EVENTS_BUBBLE &&
-                                        this._bubbleEvent.call(this, relationKey, relationValue, arguments);
-                                };
+                              relationValue._proxyCallback = function () {
+                                  return Backbone.Associations.EVENTS_BUBBLE &&
+                                      this._bubbleEvent.call(this, relationKey, relationValue, arguments);
+                              };
                             }
                             relationValue.on("all", relationValue._proxyCallback, this);
                         }
@@ -600,7 +600,7 @@
 
         // The JSON representation of the model.
         toJSON:function (options) {
-            var json = {}, aJson, parent_serialize_keys;
+            var json = {}, aJson;
             json[this.idAttribute] = this.id;
             if (!this.visited) {
                 this.visited = true;
@@ -608,10 +608,8 @@
                 json = ModelProto.toJSON.apply(this, arguments);
 
                 // Pick up only the keys you want to serialize
-                if (!(options && options.allData)) {
-                    parent_serialize_keys = options ? options.serialize_keys || [] : [];
-                    parent_serialize_keys = _.union(options.serialize_keys, [this.idAttribute]);
-                    json = _.pick(json, parent_serialize_keys);
+                if (options && options.serialize_keys) {
+                    json = _.pick(json, options.serialize_keys);
                 }
                 // If `this.relations` is defined, iterate through each `relation`
                 // and added it's json representation to parents' json representation.
@@ -646,9 +644,6 @@
                 }
 
                 delete this.visited;
-            }
-            if (_.keys(json).length == 1 && !options.noFlatten){
-              return json[_.keys(json)[0]];
             }
             return json;
         },
