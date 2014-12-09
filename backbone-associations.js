@@ -608,8 +608,7 @@
                 json = ModelProto.toJSON.apply(this, arguments);
 
                 // Pick up only the keys you want to serialize
-                if (!(options && options.allData)) {
-                    parent_serialize_keys = options ? options.serialize_keys || [] : [];
+                if (options && options.serialize_keys && !options.allData) {
                     parent_serialize_keys = _.union(options.serialize_keys, [this.idAttribute]);
                     json = _.pick(json, parent_serialize_keys);
                 }
@@ -630,14 +629,10 @@
                         //Assign to remoteKey if specified. Otherwise use the default key.
                         //Only for non-transient relationships
                         if (serialize) {
-
                             // Pass the keys to serialize as options to the toJSON method.
-                            if (serialize_keys.length) {
-                                _options ?
-                                    (_options.serialize_keys = serialize_keys) :
-                                    (_options = {serialize_keys: serialize_keys})
-                            }
-
+                            _options ?
+                                (_options.serialize_keys = serialize_keys) :
+                                (_options = {serialize_keys: serialize_keys})
                             aJson = attr && attr.toJSON ? attr.toJSON(_options) : attr;
                             json[remoteKey || key] = _.isArray(aJson) ? _.compact(aJson) : aJson;
                         }
