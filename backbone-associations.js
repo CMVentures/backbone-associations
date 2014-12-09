@@ -601,12 +601,12 @@
         // The JSON representation of the model.
         toJSON:function (options) {
             var json = {}, aJson, parent_serialize_keys;
+            options = options || {};
             json[this.idAttribute] = this.id;
             if (!this.visited) {
                 this.visited = true;
                 // Get json representation from `BackboneModel.toJSON`.
                 json = ModelProto.toJSON.apply(this, arguments);
-
                 // Pick up only the keys you want to serialize
                 if (options && options.serialize_keys && !options.allData) {
                     parent_serialize_keys = _.union(options.serialize_keys, [this.idAttribute]);
@@ -628,7 +628,7 @@
 
                         //Assign to remoteKey if specified. Otherwise use the default key.
                         //Only for non-transient relationships
-                        if (serialize) {
+                        if (serialize && (!parent_serialize_keys || _.contains(parent_serialize_keys, key))) {
                             // Pass the keys to serialize as options to the toJSON method.
                             _options ?
                                 (_options.serialize_keys = serialize_keys) :
